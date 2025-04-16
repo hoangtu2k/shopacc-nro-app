@@ -1,26 +1,32 @@
-import React, { createContext, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import './styles/App.css';
-import './styles/responsive.css';
+import "./styles/App.css";
+import "./styles/responsive.css";
 import Header from "./components/Admin/Header";
 import Sidebar from "./components/Admin/Sidebar";
+import { createContext, useEffect, useState } from "react";
+
+import { publicRouters } from "./routes";
 import RequireAuth from "./hooks/RequireAuth";
 import { AuthProvider } from "./hooks/AuthProvider";
-import AdminRoutes from './routes/AdminRoutes';
-import CustomerRoutes from './routes/CustomerRoutes';
 
 const MyContext = createContext();
 
 function App() {
   const [isToggleSidebar, setIsToggleSidebar] = useState(false);
+
+  const [isLogin, setIsLogin] = useState(true);
+
   const [isHideSidebarAndHeader, setisHideSidebarAndHeader] = useState(false);
+
   const [themeMode, setThemeMode] = useState(true);
+
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
   const [isOpenNav, setIsOpenNav] = useState(false);
 
   useEffect(() => {
-    if (themeMode) {
+    if (themeMode === true) {
       document.body.classList.remove("dark");
       document.body.classList.add("light");
       localStorage.setItem("themeMode", "light");
@@ -36,6 +42,7 @@ function App() {
       setWindowWidth(window.innerWidth);
     };
     window.addEventListener("resize", handleResize);
+
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -48,6 +55,10 @@ function App() {
   const values = {
     isToggleSidebar,
     setIsToggleSidebar,
+    isLogin,
+    setIsLogin,
+    isHideSidebarAndHeader,
+    setisHideSidebarAndHeader,
     themeMode,
     setThemeMode,
     windowWidth,
@@ -57,36 +68,59 @@ function App() {
 
   return (
     <AuthProvider>
-      <Router>
+      <BrowserRouter>
         <MyContext.Provider value={values}>
-          {!isHideSidebarAndHeader && <Header />}
+          {isHideSidebarAndHeader !== true && <Header />}
+
           <div className="main d-flex">
-            {!isHideSidebarAndHeader && (
+            {isHideSidebarAndHeader !== true && (
               <>
                 <div
-                  className={`sidebarOverlay d-none ${isOpenNav && "show"}`}
+                  className={`sidebarOverlay d-none ${
+                    isOpenNav === true && "show"
+                  }`}
                   onClick={() => setIsOpenNav(false)}
                 ></div>
-                <div className={`sidebarWrapper ${isToggleSidebar ? "toggle" : ""} ${isOpenNav ? "open" : ""}`}>
+
+                <div
+                  className={`sidebarWrapper ${
+                    isToggleSidebar === true ? "toggle" : ""
+                  } ${isOpenNav === true ? "open" : ""}`}
+                >
                   <Sidebar />
                 </div>
               </>
             )}
-            <div className={`content ${isHideSidebarAndHeader ? "full" : ""} ${isToggleSidebar ? "toggle" : ""}`}>
+
+            <div
+              className={`content ${
+                isHideSidebarAndHeader === true && "full"
+              } ${isToggleSidebar === true ? "toggle" : ""}`}
+            >
               <Routes>
-                {/* Admin Routes with RequireAuth */}
-                <Route path="/admin/*" element={
-                  <RequireAuth>
-                    <AdminRoutes />
-                  </RequireAuth>
-                } />
-                {/* Customer Routes */}
-                <Route path="/*" element={<CustomerRoutes />} />
+                {publicRouters.map((route, index) => {
+                  const Page = route.component;
+                  return (
+                    <Route
+                      key={index}
+                      path={route.path}
+                      element={
+                        route.private ? (
+                          <RequireAuth>
+                            <Page />
+                          </RequireAuth>
+                        ) : (
+                          <Page />
+                        )
+                      }
+                    />
+                  );
+                })}
               </Routes>
             </div>
           </div>
         </MyContext.Provider>
-      </Router>
+      </BrowserRouter>
     </AuthProvider>
   );
 }

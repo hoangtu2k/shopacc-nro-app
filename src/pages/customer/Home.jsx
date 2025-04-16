@@ -1,12 +1,19 @@
-import React from 'react';
+import { useContext, useEffect, useState } from "react";
+import { MyContext } from "../../App";
+import "../../styles/customer.css"; // Import the customer.css file
 import Navbar from '../../components/Customer/Navbar';
 
+
 const Home = () => {
+  const context = useContext(MyContext);
+
+  useEffect(() => {
+    context.setisHideSidebarAndHeader(true);
+  },);
+
   return (
     <div>
-      <Navbar />
       <h1>Welcome to Our Store</h1>
-      {/* Thêm nội dung trang chính ở đây */}
     </div>
   );
 };

@@ -103,15 +103,7 @@ function Sidebar() {
                                 <li><Link to="/admin">Nhà cung cáp</Link></li>
                             </ul>
                         </div>
-                    </li>
-                    <li>
-                        <Link to="/sale">
-                            <Button className={`w-100 ${activeTab === 5 ? 'active' : ''}`}>
-                                <span className="icon"><FaShoppingCart /></span>
-                                Bán hàng
-                            </Button>
-                        </Link>
-                    </li>
+                    </li>                 
                     <li>
                         <Link to="/">
                             <Button className={`w-100 ${activeTab === 9 ? 'active' : ''}`}>

@@ -19,7 +19,11 @@ import { MyContext } from "../../App";
 
 import { AuthContext } from "../../hooks/AuthProvider";
 
+import defaultImage from '../../assets/images/logo.png'; // Đường dẫn tương đối từ file hiện tại
+
+
 function Header() {
+
     const { logout } = useContext(AuthContext);
 
     const { user } = useContext(AuthContext); // Lấy thông tin người dùng từ contex
@@ -142,8 +146,8 @@ function Header() {
                                                     <div className="userImg">
                                                         <span className="rounded-circle">
                                                             <img
-                                                                src="https://techvccloud.mediacdn.vn/280518386289090560/2024/9/17/reactjs-1726545361892465400796-6-0-465-817-crop-17265453645351178455990.jpg"
-                                                                alt=""
+                                                                src={logo}
+                                                                alt="1"
                                                             />
                                                         </span>
                                                     </div>
@@ -186,7 +190,7 @@ function Header() {
                                         <div className="userImg">
                                             <span className="rounded-circle">
 
-                                                <img src={userImage} alt="User Avatar" /> {/* Hiển thị ảnh người dùng */}
+                                            <img src={userImage || defaultImage} alt="User  Avatar" /> {/* Hiển thị ảnh người dùng */}
 
                                             </span>
                                         </div>
