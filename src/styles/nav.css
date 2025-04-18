@@ -1,0 +1,308 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 10%;
+    background: #fff !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+}
+
+.left-container {
+    display: flex;
+    /* Flexbox for left container */
+    align-items: center;
+    /* Center items vertically */
+}
+
+.logo {
+    font-size: 32px;
+    color: #fff;
+    font-weight: 700;
+}
+
+.navbar {
+    display: flex;
+    /* Flex layout for navbar items */
+    margin-left: 40px;
+    /* Space between logo and nav */
+}
+
+.navbar a {
+    position: relative;
+    font-size: 18px;
+    color: black;
+    font-weight: 500;
+    margin-left: 40px;
+    text-decoration: none;
+}
+
+.navbar a::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #fff;
+    transition: .3s;
+}
+
+.navbar a:hover::before {
+    width: 100%;
+}
+
+.right-container {
+    display: flex;
+    /* Flexbox for right container */
+}
+
+.login-button {
+    margin-left: auto;
+    /* Push the button to the right */
+    background-color: #fff;
+    /* Button background color */
+    color: rgba(220, 38, 38, 1) !important;
+    /* Button text color */
+    font-weight: 600;
+    border: none;
+    /* Remove button border */
+    padding: 10px 20px;
+    /* Button padding */
+    border-radius: 5px;
+    /* Rounded corners */
+    transition: background-color 0.3s;
+    /* Smooth transition */
+    text-transform: inherit !important;
+}
+
+.price-button {
+    background: #ec4899 !important;
+    text-transform: none !important;
+    color: #fff;
+    border-radius: 10px !important;
+}
+
+.price-button span {
+    font-size: 14px;
+    color: #fff;
+}
+
+.naptien {
+    font-size: 22px;
+    background: #fff;
+    /* Remove the background color */
+    /* background: #fff !important; */
+    border-radius: 50%;
+    /* Add padding or margin if needed to adjust spacing */
+    padding: 5px;
+    /* Optional: adjust size of the icon */
+    display: flex;
+    /* Center the icon */
+    align-items: center;
+    /* Center vertically */
+    justify-content: center;
+    /* Center horizontally */
+    color: #ec4899;
+}
+
+.login-button:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+    /* Change on hover */
+}
+
+/* App.css */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: rgba(186, 141, 231, 0.345);
+    color: #333;
+}
+
+.app-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.main-content {
+    display: flex;
+    gap: 20px;
+    margin-top: 60px;
+}
+
+.section {
+    flex: 1;
+}
+
+/* App.css */
+.promo-slider {
+    position: relative;
+    height: 300px;
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .promo-card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  
+  .promo-card.active {
+    opacity: 1;
+  }
+  
+  .shop-name {
+    font-size: 28px;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 0.8s ease;
+  }
+  
+  .slogan {
+    font-size: 18px;
+    margin-bottom: 25px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    animation: fadeInUp 0.8s ease 0.3s forwards;
+    opacity: 0;
+  }
+  
+  .slider-dots {
+    position: absolute;
+    bottom: 20px;
+    display: flex;
+    gap: 8px;
+  }
+  
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .dot.active {
+    background: white;
+    transform: scale(1.2);
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .shop-name {
+      font-size: 22px;
+    }
+    
+    .slogan {
+      font-size: 16px;
+    }
+    
+  }
+
+.product-card {
+    margin-top: 20px;
+    background: #fff;
+    color: #333;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.product-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.product-card-box {
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 15px;
+    border-radius: 8px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.product-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-image {
+    width: 100%;
+    height: 150px;
+    background-color: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: #666;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .product-card-container {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .product-card-box {
+        height: auto;
+        min-height: 250px;
+    }
+
+    .product-image {
+        height: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-card-container {
+        grid-template-columns: 1fr;
+    }
+}

@@ -4,7 +4,10 @@ import SignUp from "../pages/admin/SignUp";
 import Dashboard from "../pages/admin/Dashboard";
 
 import Home from "../pages/customer/Home";
-
+import ProductList from "../pages/customer/ProductList";
+import ProductDetail from "../pages/customer/ProductDetail";
+import Cart from "../pages/customer/Cart";
+import CheckOut from "../pages/customer/CheckOut";
 
 const publicRouters = [
 
@@ -15,6 +18,10 @@ const publicRouters = [
         { path: '/admin/dashboard', component: Dashboard, private: true },
         
         { path: '/', component: Home },
+        { path: '/product-list', component: ProductList },
+        { path: '/product-detail', component: ProductDetail },
+        { path: '/cart', component: Cart },
+        { path: '/check-out', component: CheckOut },
 
       ];
 

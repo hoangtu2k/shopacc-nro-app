@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+body {
+  font-family: "Open Sans", sans-serif !important;
+  background: #ebe9e9;
+  overflow-x: hidden;
+}
+
+
+header button.rounded-circle {
+  min-width: 40px !important;
+  width: 40px !important;
+  height: 40px !important;
+  background: #f0f5ff !important;
+  color: #0858f7;
+}
+header button.rounded-circle svg {
+  color: #292929;
+  font-size: 18px !important;
+  transition: all 0.2s ease-in-out;
+}
+
+header button.rounded-circle:hover svg {
+  color: #0858f7 !important;
+}
+
+
+header {
+  width: 100%;
+  height: 65px;
+  background: rgba(255, 255, 255, 0.9);
+  top: 0;
+  left: 0;
+}
+
+header .logo {
+  text-decoration: none;
+  display: flex;
+  align-items: center; /* Center logo vertically */
+}
+
+header .logo img {
+  width: 45px;
+}
+
+header .logo span {
+  color: #292929;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+header .header-items {
+  display: flex; /* Align items horizontally */
+  align-items: center; /* Center vertically */
+  margin-left: 20px; /* Space between logo and items */
+}
+
+header .header-item {
+  margin-left: 20px; /* Space between items */
+}
+
+header .header-action{
+  background: #ec4899 !important;
+}
