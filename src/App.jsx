@@ -7,8 +7,8 @@ import Sidebar from "./components/Admin/Sidebar";
 import { createContext, useEffect, useState } from "react";
 
 import { publicRouters } from "./routes";
-import RequireAuth from "./hooks/RequireAuth";
-import { AuthProvider } from "./hooks/AuthProvider";
+import RequireAuth from "./auth/Require";
+import { AuthService } from "./auth/AuthService";
 
 const MyContext = createContext();
 
@@ -67,7 +67,7 @@ function App() {
   };
 
   return (
-    <AuthProvider>
+    <AuthService>
       <BrowserRouter>
         <MyContext.Provider value={values}>
           {isHideSidebarAndHeader !== true && <Header />}
@@ -121,7 +121,7 @@ function App() {
           </div>
         </MyContext.Provider>
       </BrowserRouter>
-    </AuthProvider>
+    </AuthService>
   );
 }
 

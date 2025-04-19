@@ -84,7 +84,7 @@ function Sidebar() {
 
                         <div className={`submenuWrapper ${activeTab === 3 && isToggleSubmenu === true ? 'colapse' : 'colapsed'} `}>
                             <ul className="submenu">
-                                <li><Link to="/admin/users">Danh sách nhân viên</Link></li>
+                                <li><Link to="/admin/user-management">Danh sách nhân viên</Link></li>
                                 <li><Link to="/">Lịch làm việc</Link></li>
                                 <li><Link to="/">Thiết lập nhân viên</Link></li>
                             </ul>

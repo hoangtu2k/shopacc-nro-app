@@ -17,7 +17,7 @@ import { FaUser } from "react-icons/fa";
 
 import { MyContext } from "../../App";
 
-import { AuthContext } from "../../hooks/AuthProvider";
+import { AuthContext } from "../../auth/AuthService";
 
 import defaultImage from '../../assets/images/logo.png'; // Đường dẫn tương đối từ file hiện tại
 
@@ -26,7 +26,7 @@ function Header() {
 
     const { logout } = useContext(AuthContext);
 
-    const { user } = useContext(AuthContext); // Lấy thông tin người dùng từ contex
+    const { user } = useContext(AuthContext); 
 
     const userName = user?.name || "Tên không xác định";
     const roleName = user?.roleName || "Chức vụ không xác định";
