@@ -2,6 +2,8 @@ import Login from "../pages/admin/Login";
 import SignUp from "../pages/admin/SignUp";
 
 import Dashboard from "../pages/admin/Dashboard";
+import UserManagement from '../pages/admin/UserManagement';
+import ChangePassword from '../pages/admin/ChangePassword';
 
 import Home from "../pages/customer/Home";
 import ProductList from "../pages/customer/ProductList";
@@ -11,17 +13,19 @@ import CheckOut from "../pages/customer/CheckOut";
 
 const publicRouters = [
 
-        { path: '/admin/login', component: Login },
-        { path: '/admin/signUp', component: SignUp },
+        { path: '/admin/login', component: Login},
+        { path: '/admin/signUp', component: SignUp},
 
         { path: '/admin/', component: Dashboard , private: true},
-        { path: '/admin/dashboard', component: Dashboard, private: true },
+        { path: '/admin/dashboard', component: Dashboard, private: true},
+        { path: '/admin/users', component: UserManagement, private: true},
+        { path: '/admin/users/:id/change-password',component: ChangePassword, private: true},
         
         { path: '/', component: Home },
-        { path: '/product-list', component: ProductList },
-        { path: '/product-detail', component: ProductDetail },
+        { path: '/product-list', component: ProductList},
+        { path: '/product-detail', component: ProductDetail},
         { path: '/cart', component: Cart },
-        { path: '/check-out', component: CheckOut },
+        { path: '/check-out', component: CheckOut},
 
       ];
 
