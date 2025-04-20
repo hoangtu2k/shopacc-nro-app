@@ -3,6 +3,7 @@ import SignUp from "../pages/admin/SignUp";
 
 import Dashboard from "../pages/admin/Dashboard";
 import UserManagement from "../pages/admin/UserManagement";
+import ProductManagement from "../pages/admin/ProductManagement";
 
 import Home from "../pages/customer/Home";
 import ProductList from "../pages/customer/ProductList";
@@ -18,6 +19,7 @@ const publicRouters = [
         { path: '/admin/', component: Dashboard , private: true},
         { path: '/admin/dashboard', component: Dashboard, private: true},
         { path: '/admin/user-management', component: UserManagement, private: true},
+        { path: '/admin/product-management', component: ProductManagement, private: true},
 
         { path: '/', component: Home },
         { path: '/product-list', component: ProductList},
