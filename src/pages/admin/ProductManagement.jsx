@@ -57,14 +57,17 @@ const styleImport = {
 const ProductManagement = () => {
     const [id, setId] = useState(null);
     const [code, setCode] = useState("");
-    const [barcode, setBarcode] = useState("");
     const [name, setName] = useState("");
+    const [planet, setPlanet] = useState("");
+    const [register, setRegister] = useState("");
+    
     const [price, setPrice] = useState("");
-    const [weight, setWeight] = useState("");
-    const [brand, setBrand] = useState("");
-    const [brandList, setBrandsList] = useState([]);
+
     const [category, setCategory] = useState("");
     const [categoryList, setcategoriesList] = useState([]);
+    const [server, setServer] = useState("");
+    const [serverList, setServerList] = useState([]);
+
     const [images, setImages] = useState([]);
     const [imagePreviews, setImagePreviews] = useState({
         main: [],
@@ -78,31 +81,29 @@ const ProductManagement = () => {
     const handleChangeCategory = (event) => {
         setCategory(event.target.value);
     };
-    const handleChangeBrand = (event) => {
-        setBrand(event.target.value);
+
+    const handleChangeServer = (event) => {
+        setServer(event.target.value);
     };
 
     const context = useContext(MyContext);
 
     const [showByStatus, setShowByStatus] = useState("");
     const [showBysetCatBy, setCatBy] = useState("");
-    const [showByBrandBy, setBrandBy] = useState("");
 
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const resultsPerPage = 5;
 
     // Lọc danh sách sản phẩm theo trạng thái, thương hiệu và danh mục
-    const filteredProducts = products.filter((product) => {
+    const filteredProducts = Array.isArray(products) ? products.filter((product) => {
         const matchesStatus =
             showByStatus === "" || product.status === Number(showByStatus);
-        const matchesBrand =
-            showByBrandBy === "" || product.brandId === Number(showByBrandBy);
         const matchesCategory =
             showBysetCatBy === "" || product.categoryId === Number(showBysetCatBy); // Giả sử product.categoryId chứa ID danh mục
 
-        return matchesStatus && matchesBrand && matchesCategory; // Phải thỏa mãn cả ba điều kiện
-    });
+        return matchesStatus && matchesCategory; // Phải thỏa mãn cả điều kiện
+    }) : []; // Nếu không phải là mảng, trả về mảng rỗng
 
     // Phân trang
     const totalResults = filteredProducts.length;
@@ -280,12 +281,12 @@ const ProductManagement = () => {
             // Gửi yêu cầu thêm sản phẩm
             const productResponse = await axios.post(`/admin/products`, {
                 code,
-                barcode,
                 name,
-                weight,
+                planet,
+                register,
                 price,
-                brandId: brand,
                 categoryId: category,
+                serverId: server,
             });
 
             const productId = productResponse.data.id;
@@ -413,12 +414,12 @@ const ProductManagement = () => {
             // Update product details
             const productResponse = await axios.put(`/admin/products/${id}`, {
                 code,
-                barcode,
                 name,
-                weight,
+                planet,
+                register,
                 price,
-                brandId: brand,
                 categoryId: category,
+                serverId: server,
             });
 
             const productId = productResponse.data.id;
@@ -466,12 +467,12 @@ const ProductManagement = () => {
     const handleOpenModelUpdateProduct = (product) => {
         setId(product.id);
         setCode(product.code);
-        setBarcode(product.barcode);
         setName(product.name);
+        setPlanet(product.planet);
+        setServer(product.serverId);
+        setRegister(product.register);
         setPrice(product.price);
-        setWeight(product.weight);
         setCategory(product.categoryId);
-        setBrand(product.brandId);
 
         const mainImage = product.imageUrl
             ? [{ url: product.imageUrl, main: true }]
@@ -509,11 +510,11 @@ const ProductManagement = () => {
 
     const resetFormFields = () => {
         setCode("");
-        setBarcode("");
         setName("");
+        setRegister("");
+        setPlanet("");
+        setServer("");
         setPrice("");
-        setWeight("");
-        setBrand("");
         setCategory("");
         setImages([]);
         setImagePreviews({
@@ -537,18 +538,24 @@ const ProductManagement = () => {
     };
 
     useEffect(() => {
-        const fetchBrandsAndCategories = async () => {
+        const fetchCategories = async () => {
             try {
-                const responseBrand = await axios.get("/admin/brands"); // Replace with your API endpoint
-                setBrandsList(responseBrand.data);
                 const responseCategory = await axios.get("/admin/categories"); // Replace with your API endpoint
                 setcategoriesList(responseCategory.data);
             } catch (error) {
-                console.error("Error fetching product brands & category:", error);
+                console.error("Error fetching product category:", error);
             }
         };
-
-        fetchBrandsAndCategories();
+        const fetchServers = async () => {
+            try {
+                const responseServer = await axios.get("/admin/servers"); // Replace with your API endpoint
+                setServerList(responseServer.data);
+            } catch (error) {
+                console.error("Error fetching product category:", error);
+            }
+        };
+        fetchServers();
+        fetchCategories();
         fetchProducts();
 
         context.setisHideSidebarAndHeader(false);
@@ -640,29 +647,6 @@ const ProductManagement = () => {
                             </FormControl>
                         </div>
 
-                        <div className="col-md-3">
-                            <h4>Hiển thị theo Thương hiệu</h4>
-                            <FormControl size="small" className="w-100">
-                                <Select
-                                    value={showByBrandBy}
-                                    onChange={(e) => {
-                                        setBrandBy(e.target.value);
-                                    }}
-                                    displayEmpty
-                                    inputProps={{ "aria-label": "Without label" }}
-                                    className="w-100"
-                                >
-                                    <MenuItem value="">
-                                        <em>None</em>
-                                    </MenuItem>
-                                    {brandList.map((bra) => (
-                                        <MenuItem key={bra.id} value={bra.id}>
-                                            {bra.name}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </div>
                     </div>
 
                     <div className="table-responsive mt-3">
@@ -670,10 +654,11 @@ const ProductManagement = () => {
                             <thead className="thead-dark">
                                 <tr>
                                     <th>Mã sản phẩm</th>
-                                    <th>Mã vạch</th>
                                     <th style={{ width: "300px" }}>Sản phẩm</th>
                                     <th>Danh mục</th>
-                                    <th>Thương hiệu</th>
+                                    <th>Server</th>
+                                    <th>Hành tinh</th>
+                                    <th>Đăng ký</th>
                                     <th>Trạng thái</th>
                                     <th>Hành động</th>
                                 </tr>
@@ -682,7 +667,6 @@ const ProductManagement = () => {
                                 {currentUsers.map((product) => (
                                     <tr key={product.id}>
                                         <td>{product.code}</td>
-                                        <td>{product.barcode}</td>
                                         <td>
                                             <div className="d-flex align-items-center productBox">
                                                 <div className="imgWrapper">
@@ -701,11 +685,19 @@ const ProductManagement = () => {
                                             </div>
                                         </td>
                                         <td>{product.categoryName}</td>
-                                        <td>{product.brandName}</td>
+                                        <td>{product.serverName}</td>
+                                        <td>{product.planet}</td>
+                                        <td>
+                                            {product.register === 1
+                                                ? "ĐK thật"
+                                                : "ĐK ảo"
+                                            }
+                                        </td>
                                         <td>
                                             {product.status === 1
                                                 ? "Cho phép kinh doanh"
-                                                : "Ngừng kinh doanh"}
+                                                : "Ngừng kinh doanh"
+                                            }
                                         </td>
                                         <td>
                                             <div className="actions d-flex align-items-center">
@@ -846,7 +838,7 @@ const ProductManagement = () => {
                                 <div className="col-md-12">
                                     <div className="card p-2 mt-0">
                                         <div className="row">
-                                            <div className="col-md-7">
+                                            <div className="col-md-6">
                                                 <div className="row ">
                                                     <div className="col">
                                                         <div className="form-group">
@@ -857,24 +849,9 @@ const ProductManagement = () => {
                                                                 <div className="col-md-9">
                                                                     <input
                                                                         type="text"
-                                                                        placeholder="Mã hàng tự động"
+                                                                        placeholder="Mã sản phẩm"
                                                                         value={code || ""}
                                                                         onChange={(e) => setCode(e.target.value)}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="form-group">
-                                                            <div className="row">
-                                                                <div className="col-md-3">
-                                                                    <h6 className="mt-2">Mã vạch</h6>
-                                                                </div>
-                                                                <div className="col-md-9">
-                                                                    <input
-                                                                        type="text"
-                                                                        value={barcode || ""}
-                                                                        onChange={(e) => setBarcode(e.target.value)}
                                                                     />
                                                                 </div>
                                                             </div>
@@ -910,26 +887,13 @@ const ProductManagement = () => {
                                                             </div>
                                                         </div>
 
-                                                        <div className="form-group">
-                                                            <div className="row">
-                                                                <div className="col-md-3">
-                                                                    <h6 className="mt-2">Trọng lượng(g)</h6>
-                                                                </div>
-                                                                <div className="col-md-9">
-                                                                    <input
-                                                                        type="text"
-                                                                        value={weight || ""}
-                                                                        onChange={(e) => setWeight(e.target.value)}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        </div>
+
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="col-md-5">
+                                            <div className="col-md-6">
                                                 <div className="row">
-                                                    <div className="col">
+                                                    <div className="col-sm-6">
                                                         <h6 className="form-select-title">Danh mục</h6>
 
                                                         <Select
@@ -948,12 +912,12 @@ const ProductManagement = () => {
                                                                 </MenuItem>
                                                             ))}
                                                         </Select>
-                                                    </div>
-                                                    <div className="col">
-                                                        <h6 className="form-select-title">Thương hiệu</h6>
+
+                                                        <h6 className="form-select-title">Server</h6>
+
                                                         <Select
-                                                            value={brand || ""}
-                                                            onChange={handleChangeBrand}
+                                                            value={server || ""}
+                                                            onChange={handleChangeServer}
                                                             displayEmpty
                                                             inputProps={{ "aria-label": "Without label" }}
                                                             className="w-100"
@@ -961,11 +925,39 @@ const ProductManagement = () => {
                                                             <MenuItem value="">
                                                                 <em>None</em>
                                                             </MenuItem>
-                                                            {brandList.map((b) => (
-                                                                <MenuItem key={b.id} value={b.id}>
-                                                                    {b.name}
+                                                            {serverList.map((ser) => (
+                                                                <MenuItem key={ser.id} value={ser.id}>
+                                                                    {ser.name}
                                                                 </MenuItem>
                                                             ))}
+                                                        </Select>
+                                                    </div>
+                                                    <div className="col-sm-6">
+                                                        <h6 className="form-select-title">Hành tinh</h6>
+
+                                                        <Select
+                                                            value={planet || ""}
+                                                            onChange={(e) => setPlanet(e.target.value)}  // Đảm bảo cập nhật giá trị
+                                                            displayEmpty
+                                                            inputProps={{ "aria-label": "Without label" }}
+                                                            className="w-100"
+                                                        >
+                                                            <MenuItem value={"Xayda"}>Xayda</MenuItem>
+                                                            <MenuItem value={"Namek"}>Namek</MenuItem>
+                                                            <MenuItem value={"Trái đất"}>Trái đất</MenuItem>
+                                                        </Select>
+
+                                                        <h6 className="form-select-title">Đăng ký</h6>
+
+                                                        <Select
+                                                            value={register || ""}
+                                                            onChange={(e) => setRegister(e.target.value)}  // Đảm bảo cập nhật giá trị
+                                                            displayEmpty
+                                                            inputProps={{ "aria-label": "Without label" }}
+                                                            className="w-100"
+                                                        >
+                                                            <MenuItem value={1}>Thật</MenuItem>
+                                                            <MenuItem value={0}>Ảo</MenuItem>
                                                         </Select>
                                                     </div>
                                                 </div>
@@ -1197,24 +1189,9 @@ const ProductManagement = () => {
                                                                 <div className="col-md-9">
                                                                     <input
                                                                         type="text"
-                                                                        placeholder="Mã hàng tự động"
+                                                                        placeholder="Mã sản phẩm"
                                                                         value={code || ""}
                                                                         onChange={(e) => setCode(e.target.value)}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="form-group">
-                                                            <div className="row">
-                                                                <div className="col-md-3">
-                                                                    <h6 className="mt-2">Mã vạch</h6>
-                                                                </div>
-                                                                <div className="col-md-9">
-                                                                    <input
-                                                                        type="text"
-                                                                        value={barcode || ""}
-                                                                        onChange={(e) => setBarcode(e.target.value)}
                                                                     />
                                                                 </div>
                                                             </div>
@@ -1250,20 +1227,6 @@ const ProductManagement = () => {
                                                             </div>
                                                         </div>
 
-                                                        <div className="form-group">
-                                                            <div className="row">
-                                                                <div className="col-md-3">
-                                                                    <h6 className="mt-2">Trọng lượng(g)</h6>
-                                                                </div>
-                                                                <div className="col-md-9">
-                                                                    <input
-                                                                        type="text"
-                                                                        value={weight || ""}
-                                                                        onChange={(e) => setWeight(e.target.value)}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1290,23 +1253,7 @@ const ProductManagement = () => {
                                                         </Select>
                                                     </div>
                                                     <div className="col">
-                                                        <h6 className="form-select-title">Thương hiệu</h6>
-                                                        <Select
-                                                            value={brand || ""}
-                                                            onChange={handleChangeBrand}
-                                                            displayEmpty
-                                                            inputProps={{ "aria-label": "Without label" }}
-                                                            className="w-100"
-                                                        >
-                                                            <MenuItem value="">
-                                                                <em>None</em>
-                                                            </MenuItem>
-                                                            {brandList.map((b) => (
-                                                                <MenuItem key={b.id} value={b.id}>
-                                                                    {b.name}
-                                                                </MenuItem>
-                                                            ))}
-                                                        </Select>
+                                                        <h6 className="form-select-title">Server</h6>
                                                     </div>
                                                 </div>
                                             </div>
