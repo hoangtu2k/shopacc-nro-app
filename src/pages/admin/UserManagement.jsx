@@ -13,13 +13,13 @@ import Pagination from "@mui/material/Pagination";
 
 import { Button, Modal, Box, TextField, Typography, Snackbar } from '@mui/material';
 
-import axios from "../../utils/axioConfig";
+import axios from "../../services/api/axioConfig";
 
 import { toast } from "react-toastify";
 import { MyContext } from "../../App";
 import { Link, useNavigate } from "react-router-dom";
 
-import { AuthContext } from "../../auth/AuthService";
+import { AuthContext } from "../../services/auth/AuthService";
 
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
     const backgroundColor =

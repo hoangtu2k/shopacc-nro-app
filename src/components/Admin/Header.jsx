@@ -17,7 +17,7 @@ import { FaUser } from "react-icons/fa";
 
 import { MyContext } from "../../App";
 
-import { AuthContext } from "../../auth/AuthService";
+import { AuthContext } from "../../services/auth/AuthService";
 
 import defaultImage from '../../assets/images/logo.png'; // Đường dẫn tương đối từ file hiện tại
 

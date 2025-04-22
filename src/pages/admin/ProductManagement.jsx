@@ -1,6 +1,6 @@
 import "../../styles/product.css";
 import React, { useContext, useEffect, useState } from "react";
-import axios from "../../utils/axioConfig";
+import axios from "../../services/api/axioConfig";
 import { toast } from "react-toastify";
 import { MyContext } from "../../App";
 import { storage } from "../../utils/firebase";
@@ -60,7 +60,7 @@ const ProductManagement = () => {
     const [name, setName] = useState("");
     const [planet, setPlanet] = useState("");
     const [register, setRegister] = useState("");
-    
+
     const [price, setPrice] = useState("");
 
     const [category, setCategory] = useState("");
@@ -687,12 +687,7 @@ const ProductManagement = () => {
                                         <td>{product.categoryName}</td>
                                         <td>{product.serverName}</td>
                                         <td>{product.planet}</td>
-                                        <td>
-                                            {product.register === 1
-                                                ? "ĐK thật"
-                                                : "ĐK ảo"
-                                            }
-                                        </td>
+                                        <td>{product.register}</td>
                                         <td>
                                             {product.status === 1
                                                 ? "Cho phép kinh doanh"
@@ -942,6 +937,9 @@ const ProductManagement = () => {
                                                             inputProps={{ "aria-label": "Without label" }}
                                                             className="w-100"
                                                         >
+                                                            <MenuItem value="">
+                                                                <em>None</em>
+                                                            </MenuItem>
                                                             <MenuItem value={"Xayda"}>Xayda</MenuItem>
                                                             <MenuItem value={"Namek"}>Namek</MenuItem>
                                                             <MenuItem value={"Trái đất"}>Trái đất</MenuItem>
@@ -956,6 +954,9 @@ const ProductManagement = () => {
                                                             inputProps={{ "aria-label": "Without label" }}
                                                             className="w-100"
                                                         >
+                                                            <MenuItem value="">
+                                                                <em>None</em>
+                                                            </MenuItem>
                                                             <MenuItem value={1}>Thật</MenuItem>
                                                             <MenuItem value={0}>Ảo</MenuItem>
                                                         </Select>
@@ -1232,7 +1233,7 @@ const ProductManagement = () => {
                                             </div>
                                             <div className="col-md-5">
                                                 <div className="row">
-                                                    <div className="col">
+                                                    <div className="col-sm-6">
                                                         <h6 className="form-select-title">Danh mục</h6>
 
                                                         <Select
@@ -1251,9 +1252,57 @@ const ProductManagement = () => {
                                                                 </MenuItem>
                                                             ))}
                                                         </Select>
-                                                    </div>
-                                                    <div className="col">
+
                                                         <h6 className="form-select-title">Server</h6>
+
+                                                        <Select
+                                                            value={server || ""}
+                                                            onChange={handleChangeServer}
+                                                            displayEmpty
+                                                            inputProps={{ "aria-label": "Without label" }}
+                                                            className="w-100"
+                                                        >
+                                                            <MenuItem value="">
+                                                                <em>None</em>
+                                                            </MenuItem>
+                                                            {serverList.map((ser) => (
+                                                                <MenuItem key={ser.id} value={ser.id}>
+                                                                    {ser.name}
+                                                                </MenuItem>
+                                                            ))}
+                                                        </Select>
+                                                    </div>
+
+                                                    <div className="col-sm-6">
+                                                        <h6 className="form-select-title">Hành tinh</h6>
+
+                                                        <Select
+                                                            value={planet || ""}
+                                                            onChange={(e) => setPlanet(e.target.value)}  // Đảm bảo cập nhật giá trị
+                                                            displayEmpty
+                                                            inputProps={{ "aria-label": "Without label" }}
+                                                            className="w-100"
+                                                        >
+                                                            <MenuItem value="">
+                                                                <em>None</em>
+                                                            </MenuItem>
+                                                            <MenuItem value={"Xayda"}>Xayda</MenuItem>
+                                                            <MenuItem value={"Namek"}>Namek</MenuItem>
+                                                            <MenuItem value={"Trái đất"}>Trái đất</MenuItem>
+                                                        </Select>
+
+                                                        <h6 className="form-select-title">Đăng ký</h6>
+
+                                                        <Select
+                                                            value={register || ""}
+                                                            onChange={(e) => setRegister(e.target.value)}  // Đảm bảo cập nhật giá trị
+                                                            displayEmpty
+                                                            inputProps={{ "aria-label": "Without label" }}
+                                                            className="w-100"
+                                                        >
+                                                            <MenuItem value={"ĐK ảo"}>ĐK Ảo</MenuItem>
+                                                            <MenuItem value={"Đk Thật"}>ĐK Thật</MenuItem>                                               
+                                                        </Select>
                                                     </div>
                                                 </div>
                                             </div>

@@ -5,10 +5,9 @@ import "./styles/responsive.css";
 import Header from "./components/Admin/Header";
 import Sidebar from "./components/Admin/Sidebar";
 import { createContext, useEffect, useState } from "react";
-
 import { publicRouters } from "./routes";
-import RequireAuth from "./auth/Require";
-import { AuthService } from "./auth/AuthService";
+import RequireAuth from "./services/auth/Require";
+import { AuthService } from "./services/auth/AuthService";
 
 const MyContext = createContext();
 
