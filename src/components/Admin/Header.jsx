@@ -79,7 +79,7 @@ function Header() {
                         <div className="col-sm-2 part1">
                             <Link to={"/admin"} className="d-flex align-items-center logo">
                                 <img src={logo} alt="" />
-                                <span className="ml-2">HOTASH</span>
+                                <span className="ml-2">DRAGON</span>
                             </Link>
                         </div>
 

@@ -2,11 +2,53 @@ import { useContext, useEffect, useState } from "react";
 import { MyContext } from "../../App";
 import Navbar from '../../components/Customer/Navbar';
 import "../../styles/nav.css"
-
+import axios from "../../services/api/axioConfig";
 
 
 const Home = () => {
   const context = useContext(MyContext);
+
+  const [products, setProducts] = useState([]);
+  const [category, setCategory] = useState("");
+  const [categoryList, setcategoriesList] = useState([]);
+
+  const fetchProductsByCategoryId = async (id) => {
+    try {
+      const response = await axios.get(`/admin/categories/${id}/products`);
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get("/admin/products"); // Adjust the URL as needed
+      setProducts(response.data);
+    } catch (error) {
+      toast.error(
+        "Error fetching users: " + (error.response?.data || error.message)
+      );
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const responseCategory = await axios.get("/admin/categories"); // Replace with your API endpoint
+      setcategoriesList(responseCategory.data);
+    } catch (error) {
+      console.error("Error fetching product category:", error);
+    }
+  };
+
+  useEffect(() => {
+
+    fetchCategories();
+    fetchProducts();
+
+    context.setisHideSidebarAndHeader(false);
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     context.setisHideSidebarAndHeader(true);
@@ -76,15 +118,17 @@ const Home = () => {
 
             <div className="product-card">
               <div className="product-card-container">
-               
-                  <div className="product-card-box" >
+
+                {categoryList.map((categoryItem, index) => (
+                  <div className="product-card-box" key={index}>
                     <div className="product-content">
-                      <div className="product-image">Hình ảnh </div>
-                      <h4>Acc sơ sinh có đệ </h4>
-                      <p>Tài khoản hiện có: </p>
+                      <div className="product-image">Hình ảnh</div>
+                      <h4>{categoryItem.name}</h4> {/* Adjust according to your data structure */}
+                      <p>Tài khoản hiện có: { }</p>
                     </div>
                   </div>
-            
+                ))}
+
               </div>
             </div>
           </div>
