@@ -19,8 +19,9 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import Swal from "sweetalert2";
-import { confirmAlert } from 'react-confirm-alert';
+import { RxReset } from "react-icons/rx";
 
+import * as XLSX from 'xlsx';
 
 const style = {
     position: "absolute",
@@ -28,7 +29,7 @@ const style = {
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: "90%", // Chiều rộng phản hồi
-    maxWidth: 1000,
+    maxWidth: 1100,
     maxHeight: "80vh", // Chiều cao tối đa
     overflowY: "auto", // Cho phép cuộn
     bgcolor: "background.paper",
@@ -55,6 +56,9 @@ const styleImport = {
 };
 
 const ProductManagement = () => {
+
+    const [excelFile, setExcelFile] = useState(null); // State for Excel file
+
     const [id, setId] = useState(null);
     const [code, setCode] = useState("");
     const [name, setName] = useState("");
@@ -62,6 +66,7 @@ const ProductManagement = () => {
     const [register, setRegister] = useState("");
 
     const [price, setPrice] = useState("");
+    const [quantity, setQuantity] = useState("");
 
     const [category, setCategory] = useState("");
     const [categoryList, setcategoriesList] = useState([]);
@@ -88,7 +93,7 @@ const ProductManagement = () => {
 
     const context = useContext(MyContext);
 
-    const [showByStatus, setShowByStatus] = useState("");
+    const [showByStatus, setShowByStatus] = useState(1);
     const [showBysetCatBy, setCatBy] = useState("");
 
     const [products, setProducts] = useState([]);
@@ -122,7 +127,12 @@ const ProductManagement = () => {
 
     // Hàm định dạng giá
     const formatPrice = (price) => {
-        return new Intl.NumberFormat("vi-VN").format(price); // Thêm "+ VND " vào cuối
+        return new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+            minimumFractionDigits: 0, // Adjust as necessary
+            maximumFractionDigits: 0, // Adjust as necessary
+        }).format(price);
     };
 
     const handleMainImageChange = (event) => {
@@ -285,6 +295,7 @@ const ProductManagement = () => {
                 planet,
                 register,
                 price,
+                quantity,
                 categoryId: category,
                 serverId: server,
             });
@@ -319,6 +330,13 @@ const ProductManagement = () => {
                 return;
             }
 
+            // Show success message
+            Swal.fire({
+                title: 'Thành công',
+                text: "Thêm thành công!",
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
             // Cập nhật danh sách sản phẩm và đặt lại form
             fetchProducts();
             resetFormFields();
@@ -418,6 +436,7 @@ const ProductManagement = () => {
                 planet,
                 register,
                 price,
+                quantity,
                 categoryId: category,
                 serverId: server,
             });
@@ -455,12 +474,73 @@ const ProductManagement = () => {
                 return; // Ngừng nếu người dùng không xác nhận
             }
 
+            // Show success message
+            Swal.fire({
+                title: 'Thành công',
+                text: "Cập nhật thành công!",
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+
             fetchProducts();
             resetFormFields();
         } catch (error) {
             console.error("Error:", error);
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const handleSubmitProductDelete = async (product) => {
+        try {
+            const result = await Swal.fire({
+                title: 'Xác nhận',
+                text: "Bạn có chắc chắn muốn xóa sản phẩm này không?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Có',
+                cancelButtonText: 'Không'
+            });
+
+            if (result.isConfirmed) {
+                const request = { serverId: product.serverId }; // Assuming you need to pass serverId
+                await axios.put(`/admin/products/delete/${product.id}`, request);
+                Swal.fire("Thành công!", "Sản phẩm đã được xóa.", "success");
+                fetchProducts(); // Refresh the product list
+            }
+
+        } catch (error) {
+            Swal.fire({
+                title: 'Lỗi',
+                text: "Không thể xóa sản phẩm. Vui lòng thử lại.",
+                icon: 'error'
+            });
+        }
+    };
+
+    const handleSubmitProductResetStatus = async (product) => {
+        try {
+            const result = await Swal.fire({
+                title: 'Xác nhận',
+                text: "Bạn có chắc chắn muốn khôi phục sản phẩm này không?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Có',
+                cancelButtonText: 'Không'
+            });
+
+            if (result.isConfirmed) {
+                const request = { serverId: product.serverId }; // Assuming you need to pass serverId
+                await axios.put(`/admin/products/reset-status/${product.id}`, request);
+                Swal.fire("Reset!", "Sản phẩm đã được khôi phục.", "success");
+                fetchProducts(); // Refresh the product list
+            }
+        } catch (error) {
+            Swal.fire({
+                title: 'Lỗi',
+                text: "Không thể Khôi phục sản phẩm. Vui lòng thử lại.",
+                icon: 'error'
+            });
         }
     };
 
@@ -537,6 +617,66 @@ const ProductManagement = () => {
         }
     };
 
+    const handleExcelFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            setExcelFile(file);
+        }
+    };
+
+    const handleImportProducts = async (e) => {
+        e.preventDefault();
+
+        if (!excelFile) {
+            Swal.fire("Lỗi", "Vui lòng chọn file Excel để nhập.", "error");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+            const data = new Uint8Array(event.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+            try {
+                // Process each product in the Excel data
+                for (const product of jsonData) {
+                    const { code, name, planet, register, price, quantity, categoryId, serverId } = product;
+
+                    // Validate fields if necessary before sending
+                    if (code && name && price && quantity) {
+                        await axios.post(`/admin/products`, {
+                            code,
+                            name,
+                            planet,
+                            register,
+                            price,
+                            quantity,
+                            categoryId,
+                            serverId,
+                        });
+                    }
+                }
+
+                Swal.fire("Thành công", "Nhập sản phẩm thành công!", "success");
+                fetchProducts(); // Refresh product list
+                setExcelFile(null); // Reset file input
+                handleCloseModelAddAndUpdateProduct(); // Close the modal
+
+            } catch (error) {
+                handleCloseModelAddAndUpdateProduct(); // Close modal on error
+                Swal.fire({
+                    title: 'Lỗi',
+                    text: error.response?.data.message || "Đã có lỗi xảy ra trong quá trình nhập.",
+                    icon: 'error'
+                });
+            }
+        };
+
+        reader.readAsArrayBuffer(excelFile);
+    };
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -579,7 +719,6 @@ const ProductManagement = () => {
         <>
             <div className="right-content w-100">
 
-
                 <div className="card shadow border-0 p-3 mt-4">
 
                     <div className="row">
@@ -597,7 +736,7 @@ const ProductManagement = () => {
                         <div className="col-md-3">
                             <Button
                                 className="btn-blue btn-lg btn-big"
-                                onClick={handleOpenModelImport} > Import</Button>
+                                onClick={handleOpenModelImport}>Import</Button>
                         </div>
 
                     </div>
@@ -624,6 +763,7 @@ const ProductManagement = () => {
                                 </Select>
                             </FormControl>
                         </div>
+
 
                         <div className="col-md-3">
                             <h4>Hiển thị theo danh mục</h4>
@@ -659,6 +799,7 @@ const ProductManagement = () => {
                                     <th>Server</th>
                                     <th>Hành tinh</th>
                                     <th>Đăng ký</th>
+                                    <th>Giá bán</th>
                                     <th>Trạng thái</th>
                                     <th>Hành động</th>
                                 </tr>
@@ -688,6 +829,7 @@ const ProductManagement = () => {
                                         <td>{product.serverName}</td>
                                         <td>{product.planet}</td>
                                         <td>{product.register}</td>
+                                        <td>{formatPrice(product.price)}</td>
                                         <td>
                                             {product.status === 1
                                                 ? "Cho phép kinh doanh"
@@ -706,9 +848,22 @@ const ProductManagement = () => {
                                                 >
                                                     <FaPencilAlt />
                                                 </Button>
-                                                <Button className="error" color="error">
-                                                    <MdDelete />
-                                                </Button>
+                                                {product.status === 1 ? (
+                                                    <Button
+                                                        className="error"
+                                                        color="error"
+                                                        onClick={() => handleSubmitProductDelete(product)}
+                                                    >
+                                                        <MdDelete />
+                                                    </Button>
+                                                ) : (
+                                                    <Button
+                                                        className="reset-button"
+                                                        onClick={() => handleSubmitProductResetStatus(product)}
+                                                    >
+                                                        <RxReset />
+                                                    </Button>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>
@@ -729,6 +884,7 @@ const ProductManagement = () => {
                         </div>
                     </div>
                 </div>
+
             </div>
 
             {/* Import sản phẩm */}
@@ -744,14 +900,14 @@ const ProductManagement = () => {
                         variant="h6"
                         component="span"
                     >
-                        Nhập hàng hóa từ file dữ liệu (Tải về file mẫu: Excel file )
+                        Nhập hàng hóa từ file dữ liệu (Tải về file mẫu: Excel file)
                     </Typography>
                     <Typography
                         id="keep-mounted-modal-description"
                         component="span"
                         sx={{ mt: 2 }}
                     >
-                        <form className="form  mt-3">
+                        <form className="form mt-3" onSubmit={handleImportProducts}>
                             <div className="row">
                                 <div className="col-md-12">
                                     <div className="card p-2 mt-0">
@@ -759,24 +915,23 @@ const ProductManagement = () => {
                                             <div className="col-md-12">
                                                 <div className="row">
                                                     <div className="col">
-
-
                                                         <div className="form-group">
                                                             <div className="row">
                                                                 <div className="col-md-6">
-
+                                                                    <input
+                                                                        type="file"
+                                                                        accept=".xlsx, .xls"
+                                                                        onChange={handleExcelFileChange}
+                                                                    />
                                                                 </div>
                                                                 <div className="col-md-6">
                                                                     <Button className="btn-blue mt-2">Chọn file dữ liệu</Button>
                                                                 </div>
                                                             </div>
                                                         </div>
-
-
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
@@ -833,7 +988,7 @@ const ProductManagement = () => {
                                 <div className="col-md-12">
                                     <div className="card p-2 mt-0">
                                         <div className="row">
-                                            <div className="col-md-6">
+                                            <div className="col-md-7">
                                                 <div className="row ">
                                                     <div className="col">
                                                         <div className="form-group">
@@ -882,11 +1037,26 @@ const ProductManagement = () => {
                                                             </div>
                                                         </div>
 
+                                                        <div className="form-group">
+                                                            <div className="row">
+                                                                <div className="col-md-3">
+                                                                    <h6 className="mt-2">Số lượng</h6>
+                                                                </div>
+                                                                <div className="col-md-9">
+                                                                    <input
+                                                                        type="text"
+                                                                        value={quantity || ""}
+                                                                        onChange={(e) => setQuantity(e.target.value)}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
 
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="col-md-6">
+                                            <div className="col-md-5">
                                                 <div className="row">
                                                     <div className="col-sm-6">
                                                         <h6 className="form-select-title">Danh mục</h6>
@@ -1301,7 +1471,7 @@ const ProductManagement = () => {
                                                             className="w-100"
                                                         >
                                                             <MenuItem value={"ĐK ảo"}>ĐK Ảo</MenuItem>
-                                                            <MenuItem value={"Đk Thật"}>ĐK Thật</MenuItem>                                               
+                                                            <MenuItem value={"Đk Thật"}>ĐK Thật</MenuItem>
                                                         </Select>
                                                     </div>
                                                 </div>

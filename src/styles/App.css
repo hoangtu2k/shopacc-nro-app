@@ -317,6 +317,7 @@ body.dark .table-striped tbody tr:nth-of-type(odd){background: rgba(0,0,0,0.2) !
 .table tbody .actions button.secondary{background: rgba(203,60,231,0.2) !important;}
 .table tbody .actions button.success{background: rgba(26,159,83,0.2) !important;}
 .table tbody .actions button.error{background: rgba(241,17,51,0.2) !important;}
+.table tbody .actions button.reset-button{background: rgba(189, 228, 44, 0.2) !important;}
 
 body.dark .table tbody .actions button.secondary{background-color: #de2fff !important;}
 body.dark .table tbody .actions button.secondary svg{color: #fff !important;}
@@ -520,7 +521,7 @@ body.dark .form .form-group input,body.dark .form .form-group textarea{backgroun
 
 
 .imgUploadBox{width: 100%; flex-wrap: nowrap; gap: 10px;}
-.imgUploadBox .uploadBox{width: 150px; height: 150px !important; padding: 0px; border-radius: 10px; border: 1px dashed  rgba(0,0,0,0.3); position:relative ; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #fafafa; transition: all 0.3s;}
+.imgUploadBox .uploadBox{width: 150px; height: 150px !important; padding: 0px; border-radius: 10px; border: 1px dashed  rgba(0,0,0,0.3); position:relative ; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #fafafa;}
  
 .imgUploadBox .uploadBox .box{width: 100%; height: 150px !important; overflow: hidden; border-radius: 7px; padding: 2px;}
 .imgUploadBox .uploadBox .box .lazy-load-image-background{height: 100% !important; width: 100% !important;}
