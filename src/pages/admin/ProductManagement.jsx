@@ -552,6 +552,7 @@ const ProductManagement = () => {
         setServer(product.serverId);
         setRegister(product.register);
         setPrice(product.price);
+        setQuantity(product.quantity);
         setCategory(product.categoryId);
 
         const mainImage = product.imageUrl
@@ -595,6 +596,7 @@ const ProductManagement = () => {
         setPlanet("");
         setServer("");
         setPrice("");
+        setQuantity("");
         setCategory("");
         setImages([]);
         setImagePreviews({
@@ -800,6 +802,7 @@ const ProductManagement = () => {
                                     <th>Hành tinh</th>
                                     <th>Đăng ký</th>
                                     <th>Giá bán</th>
+                                    <th>Số lượng</th>
                                     <th>Trạng thái</th>
                                     <th>Hành động</th>
                                 </tr>
@@ -830,6 +833,7 @@ const ProductManagement = () => {
                                         <td>{product.planet}</td>
                                         <td>{product.register}</td>
                                         <td>{formatPrice(product.price)}</td>
+                                        <td>{product.quantity}</td>
                                         <td>
                                             {product.status === 1
                                                 ? "Cho phép kinh doanh"
@@ -1393,6 +1397,21 @@ const ProductManagement = () => {
                                                                         type="text"
                                                                         value={price || ""}
                                                                         onChange={(e) => setPrice(e.target.value)}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="form-group">
+                                                            <div className="row">
+                                                                <div className="col-md-3">
+                                                                    <h6 className="mt-2">Số lượng</h6>
+                                                                </div>
+                                                                <div className="col-md-9">
+                                                                    <input
+                                                                        type="text"
+                                                                        value={quantity || ""}
+                                                                        onChange={(e) => setQuantity(e.target.value)}
                                                                     />
                                                                 </div>
                                                             </div>
